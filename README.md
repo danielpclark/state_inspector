@@ -109,7 +109,7 @@ end
 And to register this observer to a target class you simply write:
 
 ```ruby
-StateInspector::Reporter[MyTargettedClass] = ExampleObserver
+StateInspector::Reporter[MyTargetClass] = ExampleObserver
 ```
 
 
