@@ -54,8 +54,8 @@ of the object, method, old value, and new value.  So you will see what is change
 the order that the changed occurred.  This session logger will grab as many objects state changes
 as you want and give you a nice ordered history of what has occurred.
 
-If you don't want to inform on all instances of one class then instead of running `toggle_informant`
-on the class then execute that method on just the instances of that class you want instead.
+If you don't want to inform on all instances of a class then instead of running `toggle_informant`
+on the class itself then simply execute that method on the instances you want to observe.
 
 If you want to see the expected results of the current observer/reporters then see [test/reporter_test.rb](https://github.com/danielpclark/state_inspector/blob/master/test/reporter_test.rb).
 
