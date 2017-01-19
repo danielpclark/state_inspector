@@ -1,5 +1,6 @@
 # StateInspector
 [![Gem Version](https://badge.fury.io/rb/state_inspector.svg)](http://badge.fury.io/rb/state_inspector)
+[![Build Status](https://travis-ci.org/danielpclark/state_inspector.svg?branch=master)](https://travis-ci.org/danielpclark/state_inspector)
 
 The original purpose of this project is to log state change on target objects.  This will expand
 further into additional introspection as new versions are made available.
