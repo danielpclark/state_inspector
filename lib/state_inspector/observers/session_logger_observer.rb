@@ -6,14 +6,17 @@ module StateInspector
       class << self
         include Observer
         def update *values
-          @file ||= File.open(['session', Time.now.to_i, 'log'].join('.'), File::WRONLY | File::APPEND)
-          @logger ||= Logger.new(file)
+          @file ||= File.join(
+              'log', 'state_inspector',
+              ['session', Time.now.to_i, 'log'].join('.')
+            )
+          @logger ||= Logger.new(File.open(file, File::WRONLY | File::APPEND))
           @logger << values.join(splitter)
         end
 
         def display
           if @file
-            File.open(@file).read 
+            File.open(@file, File::RDONLY).read 
           else
             ""
           end
@@ -21,16 +24,22 @@ module StateInspector
 
         def values
           if @file
-            File.open(@file).readlines.map(&:chomp).map  do |line|
+            File.open(@file, File::RDONLY).readlines.map(&:chomp).map do |line|
               if line.empty?
                 nil
               else
                 line.split(splitter)
               end
-            end
+            end.compact
           else
             []
           end
+        end
+
+        def purge
+          File.delete(@file) if File.exist? @file
+          @file = nil
+          @logger = nil
         end
 
         private

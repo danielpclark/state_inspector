@@ -12,6 +12,10 @@ module StateInspector
       def values
         @values ||= []
       end
+
+      def purge
+        @values = []
+      end
     end
   end
 end

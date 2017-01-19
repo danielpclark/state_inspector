@@ -1,12 +1,18 @@
 require 'test_helper'
 require 'state_inspector/observers/internal_observer'
 include StateInspector::Observers
-class A; attr_writer :thing end
+class A
+  A.instance_variable_set(:@informant, true) # Set here and not in Minitest's setup or else inconsistent behavior!
+  attr_writer :thing
+end
 class B; attr_accessor :thing end
 
 class ReporterTest < Minitest::Test
   def observer; StateInspector::Reporter[A] end
-  def setup; StateInspector::Reporter[A] = InternalObserver; A.toggle_informant end
+  def setup
+    StateInspector::Reporter[A] = InternalObserver
+    # A.toggle_informant # Don't use here, this results in flaky behavior.
+  end
   def teardown; observer.purge end
 
   def test_reports_get_made_from_setter_methods
@@ -36,5 +42,9 @@ class ReporterTest < Minitest::Test
     assert_equal [[b, "@thing", nil, 42]], StateInspector::Reporter[B].values
     StateInspector::Reporter.default StateInspector::Observers::NullObserver
     assert_equal StateInspector::Observers::NullObserver, StateInspector::Reporter[B]
+  end
+
+  def test_logger_observer
+
   end
 end

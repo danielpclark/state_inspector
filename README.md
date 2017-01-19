@@ -1,8 +1,5 @@
 # StateInspector
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/state_inspector`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
 
 ## Installation
 
@@ -22,7 +19,12 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+## Road Map
+
+* 0.8.0 State inspection of all flagged objects on setter methods.
+Includes logger observer, internal observer, and null observer.
+
+* 1.0.0 Optional reporting on all method calls
 
 ## Development
 
@@ -32,7 +34,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/state_inspector.
+Bug reports and pull requests are welcome on GitHub at https://github.com/danielpclark/state_inspector.
 
 
 ## License
