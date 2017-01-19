@@ -1,11 +1,13 @@
 require 'test_helper'
 require 'state_inspector/observers/internal_observer'
+require 'state_inspector/observers/session_logger_observer'
 include StateInspector::Observers
 class A
   A.instance_variable_set(:@informant, true) # Set here and not in Minitest's setup or else inconsistent behavior!
   attr_writer :thing
 end
 class B; attr_accessor :thing end
+class C; attr_accessor :thing end
 
 class ReporterTest < Minitest::Test
   def observer; StateInspector::Reporter[A] end
@@ -44,7 +46,18 @@ class ReporterTest < Minitest::Test
     assert_equal StateInspector::Observers::NullObserver, StateInspector::Reporter[B]
   end
 
-  def test_logger_observer
-
+  def test_session_logger_observer
+    StateInspector::Reporter[C] = StateInspector::Observers::SessionLoggerObserver
+    c = C.new
+    c.toggle_informant
+    c.thing = 42
+    assert_equal [[c.to_s, "@thing", nil, "42"]], StateInspector::Reporter[C].values
+    c.thing = :aqua
+    assert_equal [
+        [c.to_s, "@thing", nil, "42"],
+        [c.to_s, "@thing", "42", :aqua]
+      ],
+      StateInspector::Reporter[C].values
+    StateInspector::Reporter[C].purge
   end
 end

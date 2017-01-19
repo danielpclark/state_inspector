@@ -1,4 +1,6 @@
 require_relative 'observer'
+require 'fileutils'
+require 'logger'
 
 module StateInspector
   module Observers
@@ -6,17 +8,24 @@ module StateInspector
       class << self
         include Observer
         def update *values
+          folder = File.join ['log', 'state_inspector']
           @file ||= File.join(
-              'log', 'state_inspector',
+              folder,
               ['session', Time.now.to_i, 'log'].join('.')
             )
-          @logger ||= Logger.new(File.open(file, File::WRONLY | File::APPEND))
-          @logger << values.join(splitter)
+          FileUtils.mkdir_p folder
+          File.open(@file, File::WRONLY | File::APPEND | File::CREAT) do |file|
+            logger = Logger.new(file)
+            logger << values.
+              map(&value_mapper).
+              join(splitter) 
+            logger << "\n"
+          end
         end
 
         def display
           if @file
-            File.open(@file, File::RDONLY).read 
+            File.open(@file, File::RDONLY) {|f| f.read }
           else
             ""
           end
@@ -24,11 +33,11 @@ module StateInspector
 
         def values
           if @file
-            File.open(@file, File::RDONLY).readlines.map(&:chomp).map do |line|
+            File.open(@file, File::RDONLY) {|f| f.readlines}.map(&:chomp).map do |line|
               if line.empty?
                 nil
               else
-                line.split(splitter)
+                line.split(splitter).map(&value_mapper)
               end
             end.compact
           else
@@ -39,12 +48,28 @@ module StateInspector
         def purge
           File.delete(@file) if File.exist? @file
           @file = nil
-          @logger = nil
         end
 
         private
         def splitter
           "\t\t"
+        end
+
+        def value_mapper
+          ->v{
+            case v
+            when nil
+              "nil"
+            when "nil"
+              nil
+            when Symbol
+              v.inspect
+            when ->val{ val.is_a?(String) && val =~ /\A:/ }
+              v[1..-1].to_sym
+            else
+              v
+            end
+          }
         end
       end
     end
