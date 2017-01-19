@@ -1,4 +1,4 @@
-require_relative 'null_observer'
+require_relative 'observers/null_observer'
 
 module StateInspector
   # OBSERVABLE PATTERN
@@ -13,10 +13,16 @@ module StateInspector
         reporters[key] = value
       end
 
+      def default observer=nil
+        @default = observer if observer
+        reporters.default = @default 
+        @default
+      end
+
       private
       def reporters
         @reporters ||= Hash.new.tap {|h|
-          h.default = NullObserver
+          h.default = @default || Observers::NullObserver
         }
       end
     end

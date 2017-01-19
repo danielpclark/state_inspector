@@ -9,7 +9,7 @@ module StateInspector
 
     def attr_writer attr_name
       define_method("#{attr_name}=") do |value|
-        tell_si __method__.to_s.chomp,
+        tell_si __method__.to_s.chop,
           instance_variable_get("@#{attr_name.to_s}"),
           value 
 
@@ -28,7 +28,7 @@ module StateInspector
 
     module ClassMethods
       def state_inspector
-        @@state_inspector ||= StateInspector.new
+        StateInspector
       end
 
       def tell_si what, old, new

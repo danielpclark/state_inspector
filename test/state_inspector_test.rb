@@ -1,9 +1,5 @@
 require 'test_helper'
 
-class Object
-  extend StateInspector::Snoop
-end
-
 class A
   attr_writer :thing
   attr_accessor :thing2
@@ -19,10 +15,5 @@ class StateInspectorTest < Minitest::Test
     assert A.instance_methods.include? :tell_si
     assert A.instance_methods.include? :informant?
     assert A.instance_methods.include? :toggle_informant
-  end
-
-  def test_state_inspector_gets_notified
-    a = A.new
-    a.thing = 4
   end
 end

@@ -1,7 +1,8 @@
 module StateInspector
   class StateInspector
-    def report who, what, old, new
-      Reporter[who].update what, old, new
+    def self.report who, what, old, new
+      key = who.respond_to?(:class_eval) ? who : who.class
+      Reporter[key].update who, what, old, new
     end
   end
 end
