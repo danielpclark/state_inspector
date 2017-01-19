@@ -9,11 +9,10 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Daniel P. Clark"]
   spec.email         = ["6ftdan@gmail.com"]
 
-  spec.summary       = %q{Reports state change.}
-  spec.description   = %q{Reporter of state change.}
+  spec.summary       = %q{Introspection tool for reporting state change.}
+  spec.description   = %q{Introspection tool for reporting state change.  Instance varialbes and method call debugging.}
   spec.homepage      = "https://github.com/danielpclark/state_inspector"
   spec.license       = "MIT"
-
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})

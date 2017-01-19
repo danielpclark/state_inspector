@@ -1,4 +1,5 @@
 # StateInspector
+[![Gem Version](https://badge.fury.io/rb/state_inspector.svg)](http://badge.fury.io/rb/state_inspector)
 
 The original purpose of this project is to log state change on target objects.  This will expand
 further into additional introspection as new versions are made available.
@@ -55,7 +56,7 @@ as you want and give you a nice ordered history of what has occurred.
 If you don't want to inform on all instances of one class then instead of running `toggle_informant`
 on the class then execute that method on just the instances of that class you want instead.
 
-If you want to see the expected results of the current observer/reporters then see [test/reporter_test.rb](https://github.com/danielpclark/state_inspector/test/reporter_test.rb).
+If you want to see the expected results of the current observer/reporters then see [test/reporter_test.rb](https://github.com/danielpclark/state_inspector/blob/master/test/reporter_test.rb).
 
 ## Observers
 
@@ -66,7 +67,7 @@ require 'state_inspector/observers'
 include StateInspector::Observers
 ```
 
-You may look at the available observers in [state_inspector/observers](https://github.com/danielpclark/state_inspector/lib/state_inspector/observers/).
+You may look at the available observers in [state_inspector/observers](https://github.com/danielpclark/state_inspector/tree/master/lib/state_inspector/observers).
 
 Observers will have a few methods they each have in common.
 
