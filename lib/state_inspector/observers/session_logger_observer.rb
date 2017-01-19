@@ -23,6 +23,11 @@ module StateInspector
           end
         end
 
+        def file= f
+          warn("Warning! Log file #{@file} was already set!") if @file
+          @file = f
+        end
+
         def display
           if @file
             File.open(@file, File::RDONLY) {|f| f.read }

@@ -58,6 +58,9 @@ class ReporterTest < Minitest::Test
         [c.to_s, "@thing", "42", :aqua]
       ],
       StateInspector::Reporter[C].values
+    file = StateInspector::Reporter[C].instance_variable_get(:@file)
+    assert File.exist? file
     StateInspector::Reporter[C].purge
+    refute File.exist? file
   end
 end
