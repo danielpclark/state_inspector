@@ -1,8 +1,8 @@
 require 'test_helper'
 
 class A
-  attr_writer :thing
-  attr_accessor :thing2
+  attr_writer :thing, :apple, :orange
+  attr_accessor :thing2, :apple2, :orange2
 end
 
 class StateInspectorTest < Minitest::Test
@@ -15,5 +15,14 @@ class StateInspectorTest < Minitest::Test
     assert A.instance_methods.include? :tell_si
     assert A.instance_methods.include? :informant?
     assert A.instance_methods.include? :toggle_informant
+  end
+
+  def test_attrs_make_more_than_one
+    assert_includes A.instance_methods, :apple=
+    assert_includes A.instance_methods, :apple2
+    assert_includes A.instance_methods, :apple2=
+    assert_includes A.instance_methods, :orange=
+    assert_includes A.instance_methods, :orange2
+    assert_includes A.instance_methods, :orange2=
   end
 end

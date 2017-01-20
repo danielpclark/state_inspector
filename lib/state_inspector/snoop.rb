@@ -7,23 +7,27 @@ module StateInspector
       base.include ClassMethods
     end
 
-    def attr_writer attr_name
-      define_method("#{attr_name}=") do |value|
-        tell_si __method__.to_s.chop,
-          instance_variable_get("@#{attr_name.to_s}"),
-          value 
+    def attr_writer *attr_names
+      attr_names.each do |attr_name|
+        define_method("#{attr_name}=") do |value|
+          tell_si __method__.to_s.chop,
+            instance_variable_get("@#{attr_name.to_s}"),
+            value 
 
-        instance_variable_set("@#{attr_name.to_s}", value)
+          instance_variable_set("@#{attr_name.to_s}", value)
+        end
       end
       nil
     end
 
-    def attr_accessor attr_name
-      define_method("#{attr_name}") do
-        instance_variable_get("@#{attr_name.to_s}")
-      end
+    def attr_accessor *attr_names
+      attr_names.each do |attr_name|
+        define_method("#{attr_name}") do
+          instance_variable_get("@#{attr_name.to_s}")
+        end
 
-      self.attr_writer(attr_name)
+        self.attr_writer(attr_name)
+      end
     end
 
     module ClassMethods
