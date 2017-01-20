@@ -5,9 +5,14 @@ module StateInspector
     module InternalObserver
       class << self
         include Observer
-        def purge
-          @values = []
+
+        def new 
+          InternalObserverInstance.new
         end
+      end
+
+      class InternalObserverInstance
+        include Observer
       end
     end
   end
