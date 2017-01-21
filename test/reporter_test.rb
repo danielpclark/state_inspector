@@ -3,7 +3,7 @@ require 'state_inspector/observers/internal_observer'
 require 'state_inspector/observers/session_logger_observer'
 include StateInspector::Observers
 class A
-  A.instance_variable_set(:@informant, true) # Set here and not in Minitest's setup or else inconsistent behavior!
+  #A.instance_variable_set(:@informant, true) # Set here and not in Minitest's setup or else inconsistent behavior!
   attr_writer :thing
 end
 class B; attr_accessor :thing end
@@ -13,7 +13,7 @@ class ReporterTest < Minitest::Test
   def observer; StateInspector::Reporter[A] end
   def setup
     StateInspector::Reporter[A] = InternalObserver
-    # A.toggle_informant # Don't use here, this results in flaky behavior.
+    A.toggle_informant # Don't use here, this results in flaky behavior.
   end
   def teardown; observer.purge end
 
