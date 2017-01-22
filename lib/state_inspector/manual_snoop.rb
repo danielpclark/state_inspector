@@ -1,14 +1,17 @@
 
 module StateInspector
   class ManualSnoop
-    def initialize base
+    def initialize base, **opts
       @base = base # pass in self
+
+      ## setter_filter # Choose whether to enforce setters ending with equals
+      @setter_filter = opts.fetch(:setter_filter) { false }
     end
 
     def snoop_setters *setters
       @base.class_eval do
         setters.
-          select {|m| m =~ /=\z/}.
+          select(&setter_filter).
           each do |m|
             unless methods_defined_by_attrs.include? m
               original_method = instance_method(m)
@@ -30,8 +33,12 @@ module StateInspector
 
     private
 
-    def methods_defined_by_attrs
+    def setters_defined_by_attrs *setters
       # TODO
+    end
+
+    def setter_filter
+      ->m{@setter_filter ? m =~ /=\z/ : m}
     end
   end
 end
