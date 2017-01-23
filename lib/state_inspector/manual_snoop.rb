@@ -9,7 +9,7 @@ module StateInspector
     end
 
     def snoop_setters *setters
-      @base.class_eval do
+      base.class_eval do
         setters.
           select(&setter_filter).
           each do |m|
@@ -34,11 +34,21 @@ module StateInspector
     private
 
     def setters_defined_by_attrs *setters
-      # TODO
+      base.class_eval do
+        setters.keep_if {|s| [:attr_writer, :attr_accessor].include? instance_method(s).attr? }
+      end
     end
 
     def setter_filter
       ->m{@setter_filter ? m =~ /=\z/ : m}
+    end
+
+    def base
+      if @base.respond_to? :class_eval
+        @base
+      else
+        @base.class
+      end
     end
   end
 end
