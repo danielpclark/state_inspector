@@ -16,7 +16,7 @@ which handles the behavior you want to occur with that information.
 
 ## Installation
 
-Add this line to **the beginning of** your application's Gemfile:
+Add this line to your application's Gemfile:
 
 ```ruby
 gem 'state_inspector'
