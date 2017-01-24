@@ -5,8 +5,6 @@
 The original purpose of this project is to log state change on target objects.  This will expand
 further into additional introspection as new versions are made available.
 
-**Currently this project depends on attr hooks.**
-
 This project uses a variation of the observer pattern.  There is a hash of Reporters where you can
 mark the key as a class instance or the class itself and point it to an Observer object.  Three
 observers are included for you to use under StateInspector::Observers which are NullObserver (default),
@@ -121,6 +119,24 @@ Includes logger observer, internal observer, and null observer.
 * 0.9.0 Sweep for missed setter methods and prepend inspection behavior.
 
 * 1.0.0 Optional reporting on all/target method calls
+
+## Reporter Legend
+
+The format of a report sent will alwats start with the object that sent it; aka `self`.  Next you will
+have either a string representing and instance variable of a symbol representing a method call.  If it's
+an instance variable then the next value will be the old value for that instance variable, and the next
+value is the value given to the method to be set as the value for that instance variable.  If the second
+item is a symbol then every item after that is the parameters sent to that method.
+
+**LEGEND FOR SETTER**
+----------
+`self, @instance_variable, :old_value, :new_value_given`
+----------
+
+**LEGEND FOR METHOD**
+----------
+`self, :method_name, :arguments`
+----------
 
 ## Development
 

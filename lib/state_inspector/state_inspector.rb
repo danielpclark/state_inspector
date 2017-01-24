@@ -10,9 +10,9 @@ module StateInspector
     end
 
     def snoop_setters *setters
-      base.class_eval do
-        setters.
-          select {|m| @setter_filter ? m =~ /=\z/ : m }.
+      base.class_exec do
+        setters.map(&:to_sym).
+          select {|m| @setter_filter ? m.to_s =~ /=\z/ : m }.
           select {|m| ![:attr_writer, :attr_accessor].include?(instance_method(m).attr?) }.
           each do |m|
             original_method = instance_method(m)
@@ -26,8 +26,8 @@ module StateInspector
     end
 
     def snoop_methods *meth0ds
-      base.class_eval do
-        meth0ds.
+      base.class_exec do
+        meth0ds.map(&:to_sym).
           each do |m|
             original_method = instance_method(m)
             define_method(m) do |*args, &block|
