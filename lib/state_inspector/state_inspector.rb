@@ -1,5 +1,3 @@
-require 'read_source'
-
 module StateInspector
   class StateInspector
     def initialize base, **opts
@@ -13,7 +11,8 @@ module StateInspector
       base.class_exec do
         setters.map(&:to_sym).
           select {|m| @setter_filter ? m.to_s =~ /=\z/ : m }.
-          select {|m| ![:attr_writer, :attr_accessor].include?(instance_method(m).attr?) }.
+          # This line isn't working for attrs because I already rewrote them ... grrrr ...
+          #reject {|m| [:attr_writer, :attr_accessor].include?(instance_method(m).attr?) }.
           each do |m|
             original_method = instance_method(m)
             define_method(m) do |*args, &block|

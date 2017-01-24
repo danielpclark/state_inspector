@@ -1,3 +1,4 @@
+require 'read_source'
 require 'state_inspector/version'
 require 'state_inspector/snoop'
 
