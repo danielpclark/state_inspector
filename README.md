@@ -1,11 +1,10 @@
 # StateInspector
 [![Gem Version](https://badge.fury.io/rb/state_inspector.svg)](http://badge.fury.io/rb/state_inspector)
 [![Build Status](https://travis-ci.org/danielpclark/state_inspector.svg?branch=master)](https://travis-ci.org/danielpclark/state_inspector)
+[![SayThanks.io](https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg)](https://saythanks.io/to/danielpclark)
 
 The original purpose of this project is to log state change on target objects.  This will expand
 further into additional introspection as new versions are made available.
-
-**Currently this project depends on attr hooks.**
 
 This project uses a variation of the observer pattern.  There is a hash of Reporters where you can
 mark the key as a class instance or the class itself and point it to an Observer object.  Three
@@ -112,6 +111,11 @@ And to register this observer to a target class you simply write:
 StateInspector::Reporter[MyTargetClass] = ExampleObserver
 ```
 
+## Manually Create Informers
+
+To manually create informant methods use `state_inspector.snoop_setters :a=, :b=` and
+`state_inspector.snoop_methods :a, :b`.  Until 1.0 you may end up doubling reports if
+you do this more than once or perform this on an already defined attr setter.
 
 ## Road Map
 
@@ -121,6 +125,29 @@ Includes logger observer, internal observer, and null observer.
 * 0.9.0 Sweep for missed setter methods and prepend inspection behavior.
 
 * 1.0.0 Optional reporting on all/target method calls
+
+**1.0 will be an internal implementation rewrite.**  The code you write will be the same
+for this library.  The main difference is instead of sleeper informants being handled by rewriting
+attr methods the new implementation will just integrate the behavior into the `toggle_informant`
+method.
+
+## Reporter Legend
+
+The format of a report sent will alwats start with the object that sent it; aka `self`.  Next you will
+have either a string representing and instance variable of a symbol representing a method call.  If it's
+an instance variable then the next value will be the old value for that instance variable, and the next
+value is the value given to the method to be set as the value for that instance variable.  If the second
+item is a symbol then every item after that is the parameters sent to that method.
+
+**LEGEND FOR SETTER**
+----------
+`self, @instance_variable, :old_value, :new_value_given`
+----------
+
+**LEGEND FOR METHOD**
+----------
+`self, :method_name, :arguments`
+----------
 
 ## Development
 

@@ -10,11 +10,10 @@ module StateInspector
     def attr_writer *attr_names
       attr_names.each do |attr_name|
         define_method("#{attr_name}=") do |value|
-          tell_si __method__.to_s.chop,
-            instance_variable_get("@#{attr_name.to_s}"),
-            value 
+          ivar = "@#{attr_name.to_s}"
+          tell_si ivar, instance_variable_get(ivar), value 
 
-          instance_variable_set("@#{attr_name.to_s}", value)
+          instance_variable_set(ivar, value)
         end
       end
       nil
@@ -32,11 +31,14 @@ module StateInspector
 
     module ClassMethods
       def state_inspector
-        StateInspector
+        StateInspector.new(self)
       end
 
-      def tell_si what, old, new
-        state_inspector.report( self, "@#{what.to_s}", old, new ) if informant?
+      def tell_si *args, &block
+        if informant?
+          key = self.respond_to?(:class_eval) ? self : self.class
+          Reporter[key].update(self, *args, &block)
+        end
       end
 
       def toggle_informant
