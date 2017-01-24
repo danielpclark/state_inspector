@@ -139,15 +139,14 @@ an instance variable then the next value will be the old value for that instance
 value is the value given to the method to be set as the value for that instance variable.  If the second
 item is a symbol then every item after that is the parameters sent to that method.
 
-**LEGEND FOR SETTER**
-----------
-`self, @instance_variable, :old_value, :new_value_given`
-----------
 
+---
+**LEGEND FOR SETTER**
+`self, @instance_variable, :old_value, :new_value_given`
+---
 **LEGEND FOR METHOD**
-----------
 `self, :method_name, :arguments`
-----------
+---
 
 ## Development
 
