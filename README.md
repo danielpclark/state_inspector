@@ -1,6 +1,7 @@
 # StateInspector
 [![Gem Version](https://badge.fury.io/rb/state_inspector.svg)](http://badge.fury.io/rb/state_inspector)
 [![Build Status](https://travis-ci.org/danielpclark/state_inspector.svg?branch=master)](https://travis-ci.org/danielpclark/state_inspector)
+[![SayThanks.io](https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg)](https://saythanks.io/to/danielpclark)
 
 The original purpose of this project is to log state change on target objects.  This will expand
 further into additional introspection as new versions are made available.
@@ -110,6 +111,11 @@ And to register this observer to a target class you simply write:
 StateInspector::Reporter[MyTargetClass] = ExampleObserver
 ```
 
+## Manually Create Informers
+
+To manually create informant methods use `state_inspector.snoop_setters :a=, :b=` and
+`state_inspector.snoop_methods :a, :b`.  Until 1.0 you may end up doubling reports if
+you do this more than once or perform this on an already defined attr setter.
 
 ## Road Map
 
@@ -119,6 +125,11 @@ Includes logger observer, internal observer, and null observer.
 * 0.9.0 Sweep for missed setter methods and prepend inspection behavior.
 
 * 1.0.0 Optional reporting on all/target method calls
+
+**1.0 will be an internal implementation rewrite.**  The code you write will be the same
+for this library.  The main difference is instead of sleeper informants being handled by rewriting
+attr methods the new implementation will just integrate the behavior into the `toggle_informant`
+method.
 
 ## Reporter Legend
 
