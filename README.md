@@ -142,10 +142,18 @@ item is a symbol then every item after that is the parameters sent to that metho
 
 ---
 **LEGEND FOR SETTER**
-`self, @instance_variable, :old_value, :new_value_given`
+
+```
+self, @instance_variable, :old_value, :new_value_given
+```
+
 ---
 **LEGEND FOR METHOD**
-`self, :method_name, :arguments`
+
+```
+self, :method_name, :arguments
+```
+
 ---
 
 ## Development
