@@ -2,22 +2,20 @@ module StateInspector
   class StateInspector
     def initialize base, **opts
       @base = base # pass in self
-
-      ## setter_filter # Choose whether to enforce setters ending with equals
-      @setter_filter = opts.fetch(:setter_filter) { false }
     end
 
     def snoop_setters *setters
       base.class_exec do
-        setters.map(&:to_sym).
-          select {|m| @setter_filter ? m.to_s =~ /=\z/ : m }.
-          # This line isn't working for attrs because I already rewrote them ... grrrr ...
-          #reject {|m| [:attr_writer, :attr_accessor].include?(instance_method(m).attr?) }.
+        setters.
+          delete_if {|m| (@state_inspector ||= {}).fetch(m){ nil } }.
           each do |m|
-            original_method = instance_method(m)
-            define_method(m) do |*args, &block|
+            (@state_inspector ||= {})[m] = __method__
+            single = singleton_methods.include? m
+            original_method = (single ? singleton_method(m) : instance_method(m))
+            send((single ? :define_singleton_method : :define_method), m) do |*args, &block|
               var = "@#{__method__.to_s.chop}"
               tell_si var, instance_variable_get(var), *args, &block
+              original_method = (single ? original_method.unbind : original_method)
               original_method.bind(self).call(*args, &block)
             end
           end
@@ -26,15 +24,24 @@ module StateInspector
 
     def snoop_methods *meth0ds
       base.class_exec do
-        meth0ds.map(&:to_sym).
+        meth0ds.
+          delete_if {|m| (@state_inspector ||= {}).fetch(m){ nil } }.
           each do |m|
-            original_method = instance_method(m)
-            define_method(m) do |*args, &block|
+            (@state_inspector ||= {})[m] = __method__
+            single = singleton_methods.include? m
+            original_method = (single ? singleton_method(m) : instance_method(m))
+            send((single ? :define_singleton_method : :define_method), m) do |*args, &block|
               tell_si __method__, *args, &block
+              original_method = (single ? original_method.unbind : original_method)
               original_method.bind(self).call(*args, &block)
             end
           end
       end
+    end
+
+    def skip_setter_snoops
+      base.instance_variable_set(:@state_inspector, Hash.new) unless base.
+        instance_variable_defined? :@state_inspector
     end
 
     private

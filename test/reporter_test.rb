@@ -6,10 +6,12 @@ class B; attr_accessor :thing end
 class C; attr_accessor :thing end
 class D; attr_accessor :thing end
 class F; attr_accessor :thing end
+class G; def thing(one:); yield end end
 StateInspector::Reporter[A] = InternalObserver
 StateInspector::Reporter[D] = InternalObserver.new
 StateInspector::Reporter[F] = InternalObserver.new
-A.toggle_informant
+StateInspector::Reporter[G] = InternalObserver.new
+
 D.toggle_informant
 F.toggle_informant
 
@@ -18,6 +20,7 @@ class ReporterTest < Minitest::Test
   def teardown; observer.purge end
 
   def test_reports_get_made_from_setter_methods
+    A.toggle_informant
     a = A.new
     a.thing = 4
     assert_equal [[a, "@thing", nil, 4]], observer.values
@@ -34,6 +37,8 @@ class ReporterTest < Minitest::Test
         [a, "@thing", 5, nil]
       ],
       observer.values
+  ensure
+    A.toggle_informant
   end
 
   def test_internal_observer_can_have_separate_observers
@@ -76,5 +81,15 @@ class ReporterTest < Minitest::Test
     assert File.exist? file
     StateInspector::Reporter[C].purge
     refute File.exist? file
+  end
+
+  def test_good_behavior_for_kwargs_and_a_block
+    g = G.new
+    toggle_snoop_clean(g) do
+      g.state_inspector.snoop_methods :thing
+      g.thing(one: 4) { nil }
+      assert_equal [[g, :thing, {:one => 4}]], 
+        StateInspector::Reporter[G].values
+    end
   end
 end
