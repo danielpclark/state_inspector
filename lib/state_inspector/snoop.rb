@@ -23,7 +23,7 @@ module StateInspector
         state_inspector.snoop_setters(
           *(self.respond_to?(:class_eval) ? self : self.class).
           instance_methods.grep(/=\z/) - Object.methods
-        ) unless @state_inspector
+        ) unless @state_inspector || self.class.instance_variable_get(:@state_inspector)
 
         @informant = !@informant
       end

@@ -39,6 +39,11 @@ module StateInspector
       end
     end
 
+    def skip_setter_snoops
+      base.instance_variable_set(:@state_inspector, Hash.new) unless base.
+        instance_variable_defined? :@state_inspector
+    end
+
     private
     def base
       if @base.respond_to? :class_eval
