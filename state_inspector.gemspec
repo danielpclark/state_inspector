@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Daniel P. Clark"]
   spec.email         = ["6ftdan@gmail.com"]
 
-  spec.summary       = %q{Introspection tool for reporting state change.}
-  spec.description   = %q{Introspection tool for reporting state change.  Instance varialbes and method call debugging.}
+  spec.summary       = %q{Introspection tool for reporting method calls and state change.}
+  spec.description   = %q{Introspection tool for reporting method calls and state change.  Instance variables and method call debugging.}
   spec.homepage      = "https://github.com/danielpclark/state_inspector"
   spec.license       = "MIT"
 
