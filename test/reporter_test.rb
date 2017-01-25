@@ -9,7 +9,7 @@ class F; attr_accessor :thing end
 StateInspector::Reporter[A] = InternalObserver
 StateInspector::Reporter[D] = InternalObserver.new
 StateInspector::Reporter[F] = InternalObserver.new
-A.toggle_informant
+
 D.toggle_informant
 F.toggle_informant
 
@@ -18,6 +18,7 @@ class ReporterTest < Minitest::Test
   def teardown; observer.purge end
 
   def test_reports_get_made_from_setter_methods
+    A.toggle_informant
     a = A.new
     a.thing = 4
     assert_equal [[a, "@thing", nil, 4]], observer.values
@@ -34,6 +35,7 @@ class ReporterTest < Minitest::Test
         [a, "@thing", 5, nil]
       ],
       observer.values
+    A.toggle_informant
   end
 
   def test_internal_observer_can_have_separate_observers
