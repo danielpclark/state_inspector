@@ -46,7 +46,14 @@ end
 StateInspector::Reporter[MyClass] = SessionLoggerObserver
 
 MyClass.toggle_informant
+
+m = MyClass.new
+m.thing = :a
+
+StateInspector::Reporter[MyClass].values
+# => [["#<MyClass:0x005571fde5e498>", "@thing", nil, :a]]
 ```
+SessionLoggerObserver will by default log reports to `log/state_inspector/`.
 
 Now everytime the setter method is used for `thing` a new line will be entered into a log file
 of the object, method, old value, and new value.  So you will see what is changed from where in
