@@ -156,7 +156,7 @@ And to register this observer to a target class you simply write:
 StateInspector::Reporter[MyTargetClass] = ExampleObserver
 ```
 
-## Manually Create Informers
+## Manually Create or Remove Informers
 
 To manually create informant methods use `state_inspector.snoop_setters :a=, :b=` and
 `state_inspector.snoop_methods :a, :b`.  
@@ -195,6 +195,17 @@ StateInspector::Reporter[MyClass].values
 #    ]
 ```
 The nils in the values above represent the previous value the instance variable returned.
+
+#### Remove Informers
+
+To remove informers simply use `state_inspector.restore_methods`.  This takes out the hook from
+each method that waits for the `informer?` method to be true.
+
+```ruby
+# continuing from the above example
+
+m.state_inspector.restore_methods :b=, :c=, :x
+```
 
 ## Reporter Legend
 

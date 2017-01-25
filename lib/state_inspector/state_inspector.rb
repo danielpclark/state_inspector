@@ -7,15 +7,19 @@ module StateInspector
     def snoop_setters *setters
       base.class_exec do
         setters.
-          delete_if {|m| (@state_inspector ||= {}).fetch(m){ nil } }.
+          delete_if {|m| (@state_inspector || {}).fetch(m){ nil } }.
           each do |m|
-            (@state_inspector ||= {})[m] = __method__
             single = singleton_methods.include? m
-            original_method = (single ? singleton_method(m) : instance_method(m))
+            original_method = (single ? singleton_method(m).unbind : instance_method(m))
+            (@state_inspector ||= {})[m] = {
+              contructor: __method__,
+              class: self,
+              singleton_method: single,
+              original_method: original_method
+            }
             send((single ? :define_singleton_method : :define_method), m) do |*args, &block|
               var = "@#{__method__.to_s.chop}"
               tell_si var, instance_variable_get(var), *args, &block
-              original_method = (single ? original_method.unbind : original_method)
               original_method.bind(self).call(*args, &block)
             end
           end
@@ -25,16 +29,34 @@ module StateInspector
     def snoop_methods *meth0ds
       base.class_exec do
         meth0ds.
-          delete_if {|m| (@state_inspector ||= {}).fetch(m){ nil } }.
+          delete_if {|m| (@state_inspector || {}).fetch(m){ nil } }.
           each do |m|
-            (@state_inspector ||= {})[m] = __method__
             single = singleton_methods.include? m
-            original_method = (single ? singleton_method(m) : instance_method(m))
+            original_method = (single ? singleton_method(m).unbind : instance_method(m))
+            (@state_inspector ||= {})[m] = {
+              contructor: __method__,
+              class: self,
+              singleton_method: single,
+              original_method: original_method
+            }
             send((single ? :define_singleton_method : :define_method), m) do |*args, &block|
               tell_si __method__, *args, &block
-              original_method = (single ? original_method.unbind : original_method)
               original_method.bind(self).call(*args, &block)
             end
+          end
+      end
+    end
+
+    def restore_methods *meth0ds
+      base.class_eval do
+        meth0ds.
+          select {|m| (@state_inspector || {}).has_key? m }.
+          select {|m| self == @state_inspector[m][:class] }.
+          each do |m|
+            definer = @state_inspector[m][:singleton_method] ? :define_singleton_method : :define_method
+            meth0d = send(definer, m, @state_inspector[m][:original_method])
+            @state_inspector.delete(m)
+            meth0d
           end
       end
     end

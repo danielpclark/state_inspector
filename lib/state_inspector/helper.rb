@@ -13,9 +13,8 @@ module StateInspector
       yield
     ensure
       obj.toggle_informant
-      obj.instance_exec {@state_inspector = nil} if obj.
-        instance_variable_get(:@state_inspector).
-        tap {|h| h.is_a?(Hash) ? h.empty? : h}
+      (obj.respond_to?(:class_eval) ? obj : obj.class).
+        remove_instance_variable(:@state_inspector) 
     end
   end
 end
