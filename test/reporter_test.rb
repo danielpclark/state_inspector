@@ -6,9 +6,11 @@ class B; attr_accessor :thing end
 class C; attr_accessor :thing end
 class D; attr_accessor :thing end
 class F; attr_accessor :thing end
+class G; def thing(one:); yield end end
 StateInspector::Reporter[A] = InternalObserver
 StateInspector::Reporter[D] = InternalObserver.new
 StateInspector::Reporter[F] = InternalObserver.new
+StateInspector::Reporter[G] = InternalObserver.new
 
 D.toggle_informant
 F.toggle_informant
@@ -35,6 +37,7 @@ class ReporterTest < Minitest::Test
         [a, "@thing", 5, nil]
       ],
       observer.values
+  ensure
     A.toggle_informant
   end
 
@@ -78,5 +81,15 @@ class ReporterTest < Minitest::Test
     assert File.exist? file
     StateInspector::Reporter[C].purge
     refute File.exist? file
+  end
+
+  def test_good_behavior_for_kwargs_and_a_block
+    g = G.new
+    toggle_snoop_clean(g) do
+      g.state_inspector.snoop_methods :thing
+      g.thing(one: 4) { nil }
+      assert_equal [[g, :thing, {:one => 4}]], 
+        StateInspector::Reporter[G].values
+    end
   end
 end
