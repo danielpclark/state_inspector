@@ -3,8 +3,8 @@
 [![Build Status](https://travis-ci.org/danielpclark/state_inspector.svg?branch=master)](https://travis-ci.org/danielpclark/state_inspector)
 [![SayThanks.io](https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg)](https://saythanks.io/to/danielpclark)
 
-The original purpose of this project is to log state change on target objects.  This will expand
-further into additional introspection as new versions are made available.
+The original purpose of this project is to log state change on target objects.  This now can fully
+inform on method calls with parameters as well as instance variables.
 
 This project uses a variation of the observer pattern.  There is a hash of Reporters where you can
 mark the key as a class instance or the class itself and point it to an Observer object.  Three
@@ -57,6 +57,44 @@ If you don't want to inform on all instances of a class then instead of running 
 on the class itself then simply execute that method on the instances you want to observe.
 
 If you want to see the expected results of the current observer/reporters then see [test/reporter_test.rb](https://github.com/danielpclark/state_inspector/blob/master/test/reporter_test.rb).
+
+If you want to only toggle an informant for a small area you may use a helper method to toggle the
+observer on and off for you.
+
+```ruby
+require 'state_inspector/helper'
+include Helper
+
+# instead of doing MyClass.toggle_informant as above, do this.
+
+m = MyClass.new
+toggle_snoop(m) do
+  # put your own code here
+end
+```
+
+When writing tests for code and using StateInspector it's very important to ensure the informant is
+untoggled.  Otherwise you will have sporatic behavior in your tests.  You may use the helpers provided
+here for your tests to ensure you won't have glitchy tests as a result of using informants.
+
+To include it in Minitest you would do:
+
+```ruby
+# test/test_helper.rb or test/minitest_helper.rb
+
+require 'state_inspector/helper'
+class Minitest::Test
+  include StateInspector::Helper
+end
+```
+
+The default behavior for toggling on an informant for the first time is to inject code to observe all
+setter methods.  This is true for both the Object method `toggle_informant` and the helper method
+`toggle_snoop`.  If you would like to avoid injecting all setter methods for reporting you may either
+use `state_inspector.skip_setter_snoops` (before any toggling) or the helper `toggle_snoop_clean` which
+will cleanly remove its anti-setter hook once done (meaning the next `toggle_informant` will inject the
+informant code into all setters).
+
 
 ## Observers
 
@@ -114,47 +152,61 @@ StateInspector::Reporter[MyTargetClass] = ExampleObserver
 ## Manually Create Informers
 
 To manually create informant methods use `state_inspector.snoop_setters :a=, :b=` and
-`state_inspector.snoop_methods :a, :b`.  Until 1.0 you may end up doubling reports if
-you do this more than once or perform this on an already defined attr setter.
+`state_inspector.snoop_methods :a, :b`.  
 
-## Road Map
+```ruby
+require 'state_inspector'
+require 'state_inspector/observers/internal_observer'
+include StateInspector::Observers
 
-* 0.8.0 State inspection of all flagged objects on setter methods.
-Includes logger observer, internal observer, and null observer.
+class MyClass
+  attr_writer :a, :b, :c
+  def x *args; end
+end
 
-* 0.9.0 Sweep for missed setter methods and prepend inspection behavior.
+# InternalObserver (it can be used with many classes and hold all of the data)
+# InternalObserver.new (will hold data for only the specific reporter object pointing to it)
+StateInspector::Reporter[MyClass] = InternalObserver
 
-* 1.0.0 Optional reporting on all/target method calls
+# This will allow us to manually define which setter methods to inform on
+MyClass.state_inspector.skip_setter_snoops
 
-**1.0 will be an internal implementation rewrite.**  The code you write will be the same
-for this library.  The main difference is instead of sleeper informants being handled by rewriting
-attr methods the new implementation will just integrate the behavior into the `toggle_informant`
-method.
+m = MyClass.new
+m.toggle_informant
+m.state_inspector.snoop_setters :b=, :c=
+m.state_inspector.snoop_methods :x
+m.a= 1
+m.b= 2
+m.c= 3
+m.x 4, 5, 6
+
+StateInspector::Reporter[MyClass].values
+# => [
+#      [#<MyClass:0x005608eb9aead0 @informant=true, @a=1, @b=2, @c=3>, "@b", nil, 2],
+#      [#<MyClass:0x005608eb9aead0 @informant=true, @a=1, @b=2, @c=3>, "@c", nil, 3],
+#      [#<MyClass:0x005608eb9aead0 @informant=true, @a=1, @b=2, @c=3>, :x, 4, 5, 6]
+#    ]
+```
+The nils in the values above represent the previous value the instance variable returned.
 
 ## Reporter Legend
 
-The format of a report sent will alwats start with the object that sent it; aka `self`.  Next you will
+The format of a report sent will always start with the object that sent it; aka `self`.  Next you will
 have either a string representing and instance variable of a symbol representing a method call.  If it's
 an instance variable then the next value will be the old value for that instance variable, and the next
 value is the value given to the method to be set as the value for that instance variable.  If the second
 item is a symbol then every item after that is the parameters sent to that method.
 
 
----
-**LEGEND FOR SETTER**
+LEGEND FOR SETTER| _ | _ | _
+-----------------|---|---|---
+`self` | `@instance_variable` | `:old_value` | `:new_value_given`
 
-```
-self, @instance_variable, :old_value, :new_value_given
-```
 
----
-**LEGEND FOR METHOD**
+LEGEND FOR METHOD| _ | _ 
+-----------------|---|---
+`self` | `:method_name` | `:arguments`
 
-```
-self, :method_name, :arguments
-```
-
----
 
 ## Development
 
