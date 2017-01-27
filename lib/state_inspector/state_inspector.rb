@@ -9,7 +9,7 @@ module StateInspector
         setters.
           delete_if {|m| (@state_inspector || {}).fetch(m){ nil } }.
           each do |m|
-            single = singleton_methods.include? m
+            single = singleton_methods.include?(m) && method(m).owner == self.singleton_class
             original_method = (single ? singleton_method(m).unbind : instance_method(m))
             (@state_inspector ||= {})[m] = {
               contructor: __method__,
@@ -31,7 +31,7 @@ module StateInspector
         meth0ds.
           delete_if {|m| (@state_inspector || {}).fetch(m){ nil } }.
           each do |m|
-            single = singleton_methods.include? m
+            single = singleton_methods.include?(m) && method(m).owner == self.singleton_class 
             original_method = (single ? singleton_method(m).unbind : instance_method(m))
             (@state_inspector ||= {})[m] = {
               contructor: __method__,
