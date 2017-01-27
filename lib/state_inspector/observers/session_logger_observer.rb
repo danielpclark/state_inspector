@@ -8,12 +8,11 @@ module StateInspector
       class << self
         include Observer
         def update *values
-          folder = File.join ['log', 'state_inspector']
           @file ||= File.join(
-              folder,
+              'log', 'state_inspector',
               ['session', Time.now.to_i, 'log'].join('.')
             )
-          FileUtils.mkdir_p folder
+          FileUtils.mkdir_p File.dirname(@file)
           File.open(@file, File::WRONLY | File::APPEND | File::CREAT) do |file|
             logger = Logger.new(file)
             logger << values.
