@@ -3,8 +3,7 @@
 [![Build Status](https://travis-ci.org/danielpclark/state_inspector.svg?branch=master)](https://travis-ci.org/danielpclark/state_inspector)
 [![SayThanks.io](https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg)](https://saythanks.io/to/danielpclark)
 
-The original purpose of this project is to log state change on target objects.  This now can fully
-inform on method calls with parameters as well as instance variables.
+This can fully inform on object method calls and parameters as well as instance variables before and after (when called via a setter method).  In short this utilizes the decorator patttern and the observer pattern to hook and report when a method is called.  In simple terms it will wrap any methods you choose with a hook that sends off all the details of the method call when it is executed to a reporter/observer of your choosing.
 
 This project uses a variation of the observer pattern.  There is a hash of Reporters where you can
 mark the key as a class instance or the class itself and point it to an Observer object.  Three
