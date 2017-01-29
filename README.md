@@ -1,3 +1,4 @@
+<img src="https://s28.postimg.org/59wa7e71p/observer_hooks.png" alt="Observer Hooks" align="right" width="50" height="50" />
 # StateInspector
 [![Gem Version](https://badge.fury.io/rb/state_inspector.svg)](http://badge.fury.io/rb/state_inspector)
 [![Build Status](https://travis-ci.org/danielpclark/state_inspector.svg?branch=master)](https://travis-ci.org/danielpclark/state_inspector)
