@@ -226,6 +226,25 @@ LEGEND FOR METHOD| _ | _
 `self` | `:method_name` | `:arguments`
 
 
+## Session Logger
+
+The session logger is an observer that saves all output to a log file.  A default log file is saved to `log/state_inspector/<timestamp>.log`.  You can manually set a log file with the `file=` method on the SessionLoggerObserver which may be helpful for situations where the code runs in a temporary directory and vanishes upon completion (like the rubygems test suite).
+
+Here's an example that catches all setter method calls from constants within the `Gem` class.  _Placed at start of file to observe._
+
+```ruby
+require 'state_inspector'
+require 'state_inspector/observers/session_logger_observer'
+include StateInspector::Observers
+
+SessionLoggerObserver.file = "/home/myhomedir/dev/rubygems/log/output.log"
+StateInspector::Reporter.default SessionLoggerObserver
+Gem.constants.each {|c| a = eval("Gem::#{c}"); if a.is_a? Class; a.toggle_informant end}
+```
+This example is a very expensive one as we set the default observer/reporter to `SessionLoggerObserver` which means it catches **all reports not previously assigned**.  The last line simply finds all class objects within the Gem namespace and toggles-on the informants (which by default hooks in listeners to each setter method).  The `file=` method used here overwrites the default and guarantees where the data will be written.
+
+I've tried the above code in the rubygems test suite on one file `test/rubygems/test_gem_dependency_installer.rb`.  When running this file it records 7756 lines worth of information.  This is clearly too much information to parse manually which is why I highly recommend using the scoped helper methods to toggle on and off the behavior around the code you are specifically interested in.  You can still toggle informers on many classes like what was done above, but the more objects you do the more I recommend you narrow down the scope of what you're capturing (like to one specific test in a test suite).
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
