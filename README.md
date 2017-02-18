@@ -70,7 +70,7 @@ observer on and off for you.
 
 ```ruby
 require 'state_inspector/helper'
-include Helper
+include StateInspector::Helper
 
 # instead of doing MyClass.toggle_informant as above, do this.
 
