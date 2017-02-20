@@ -1,5 +1,4 @@
 require 'test_helper'
-require 'state_inspector/observers'
 include StateInspector::Observers
 class A; attr_writer :thing end
 class B; attr_accessor :thing end

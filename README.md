@@ -29,7 +29,7 @@ Or install it yourself as:
 
     $ gem install state_inspector
 
-## Usage
+## Complex Usage
 
 The preferred usage is to pick what classes you want to track state change in and have them logged to
 a session logger.  To do this you would need to do the following.
@@ -65,19 +65,31 @@ on the class itself then simply execute that method on the instances you want to
 
 If you want to see the expected results of the current observer/reporters then see [test/reporter_test.rb](https://github.com/danielpclark/state_inspector/blob/master/test/reporter_test.rb).
 
+## Simple Usage
+
 If you want to only toggle an informant for a small area you may use a helper method to toggle the
 observer on and off for you.
 
+When you include `StateInspector::Helper` it handles requiring the existing observers and bringing them
+into scope.  You are free to pass in an observer as a second paramater to the `toggle_snoop` helper method
+which will only be assigned for the scope of the block of code.
+
 ```ruby
 require 'state_inspector/helper'
-include Helper
+include StateInspector::Helper
 
 # instead of doing MyClass.toggle_informant as above, do this.
 
 m = MyClass.new
-toggle_snoop(m) do
+observer = InternalObserver.new
+
+# observer parameter optional.  Assign beforehand if not provided here.
+toggle_snoop(m, observer) do
   # put your own code here
 end
+
+# look at the results
+observer.values
 ```
 
 When writing tests for code and using StateInspector it's very important to ensure the informant is
@@ -240,4 +252,5 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/daniel
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+
 

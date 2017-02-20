@@ -15,6 +15,7 @@ module StateInspector
       def tell_si *args, &block
         if informant?
           key = self.respond_to?(:class_eval) ? self : self.class
+          key = Reporter.has_key?(key) ? key : self
           Reporter[key].update(self, *args, &block)
         end
       end

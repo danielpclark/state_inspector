@@ -13,6 +13,19 @@ module StateInspector
         reporters[key] = value
       end
 
+      def has_key? key
+        reporters.has_key?(key)
+      end
+
+      def has_observer? key
+        class_key = key.respond_to?(:class_eval) ? key : key.class
+        reporters.has_key?(key) || reporters.has_key?(class_key)
+      end
+
+      def drop key
+        reporters.delete key
+      end
+
       def default observer=nil
         @default = observer if observer
         reporters.default = @default 
