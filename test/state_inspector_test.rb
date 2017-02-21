@@ -32,9 +32,11 @@ class StateInspectorTest < Minitest::Test
       b.state_inspector.snoop_methods :add
       assert_equal 11, b.add(5, 6)
       assert_equal [[b, :add, 5, 6]], StateInspector::Reporter[Behavior].values
+      refute_empty Behavior.instance_variable_get(:@state_inspector)
       b.state_inspector.restore_methods :add
       assert_equal 13, b.add(6, 7)
       assert_equal [[b, :add, 5, 6]], StateInspector::Reporter[Behavior].values
+      assert_empty Behavior.instance_variable_get(:@state_inspector)
     end
     StateInspector::Reporter[Behavior].purge
   end
