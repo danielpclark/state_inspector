@@ -5,6 +5,7 @@ class HelperThing2; attr_writer :example end
 class HelperThing3; attr_writer :example end
 class HelperThing4; attr_writer :example end
 class HelperThing5; attr_writer :example end
+class HelperThing6; attr_writer :example end
 
 class HelperTest < Minitest::Test
   def test_it_scopes_reporter_to_helper_on_toggle_snoop
@@ -62,17 +63,77 @@ class HelperTest < Minitest::Test
     assert obj.class.instance_variable_defined?(:@state_inspector)
     refute_empty observer.values
 
-    # side effect of @state_inspector removal
-    toggle_snoop_clean(obj) do |obsrvr|
+    #it "test side effect of @state_inspector removal" do
+      toggle_snoop_clean(obj) do |obsrvr|
+        assert obj.class.instance_variable_get(:@state_inspector)
+        assert_equal [:example=], obj.class.instance_variable_get(:@state_inspector).keys 
+        obj.example = 4
+        assert_equal [
+          [obj, "@example", nil, 4],
+          [obj, "@example", 4, 4]
+        ], obsrvr.values
+      end
+      refute obj.class.instance_variable_defined?(:@state_inspector)
+      refute_empty observer.values
+    #end
+
+    #it "tests side effect of previous toggle_snoop_clean should remove informer" do
+      toggle_snoop_clean(obj) do |obsrvr|
+        assert obj.class.instance_variable_get(:@state_inspector)
+        assert_empty obj.class.instance_variable_get(:@state_inspector).keys 
+
+        # there should be nore informing on this method call
+        obj.example = 4
+        # previous values
+        assert_equal [
+          [obj, "@example", nil, 4],
+          [obj, "@example", 4, 4]
+        ], obsrvr.values
+      end
+    #end
+  end
+
+  def test_toggle_snoop_still_produces_results_with_Class_of_obj
+    obj = HelperThing6.new
+    observer = InternalObserver.new
+    StateInspector::Reporter[HelperThing6] = observer
+    refute obj.class.instance_variable_defined?(:@state_inspector)
+    toggle_snoop(HelperThing6) do |obsrvr|
       assert obj.class.instance_variable_get(:@state_inspector)
       assert_equal [:example=], obj.class.instance_variable_get(:@state_inspector).keys 
       obj.example = 4
-      assert_equal [
-        [obj, "@example", nil, 4],
-        [obj, "@example", 4, 4]
-      ], obsrvr.values
+      assert_equal [[obj, "@example", nil, 4]], obsrvr.values
     end
-    refute obj.class.instance_variable_defined?(:@state_inspector)
+    assert obj.class.instance_variable_defined?(:@state_inspector)
     refute_empty observer.values
+
+    #it "test side effect of @state_inspector removal" do
+      toggle_snoop_clean(HelperThing6) do |obsrvr|
+        assert obj.class.instance_variable_get(:@state_inspector)
+        assert_equal [:example=], obj.class.instance_variable_get(:@state_inspector).keys 
+        obj.example = 4
+        assert_equal [
+          [obj, "@example", nil, 4],
+          [obj, "@example", 4, 4]
+        ], obsrvr.values
+      end
+      refute obj.class.instance_variable_defined?(:@state_inspector)
+      refute_empty observer.values
+    #end
+
+    #it "tests side effect of previous toggle_snoop_clean should remove informer" do
+      toggle_snoop_clean(HelperThing6) do |obsrvr|
+        assert obj.class.instance_variable_get(:@state_inspector)
+        assert_empty obj.class.instance_variable_get(:@state_inspector).keys 
+
+        # there should be nore informing on this method call
+        obj.example = 4
+        # previous values
+        assert_equal [
+          [obj, "@example", nil, 4],
+          [obj, "@example", 4, 4]
+        ], obsrvr.values
+      end
+    #end
   end
 end

@@ -29,8 +29,9 @@ module StateInspector
       value = yield Reporter[obj]
     ensure
       obj.toggle_informant
-      (obj.respond_to?(:class_eval) ? obj : obj.class).
-        remove_instance_variable(:@state_inspector) 
+      si = obj.respond_to?(:class_eval) ? obj : obj.class
+      obj.state_inspector.restore_methods(*si.instance_variable_get(:@state_inspector).keys)
+      si.remove_instance_variable(:@state_inspector) 
       (old_observer.nil? ? Reporter.drop(obj) : Reporter[obj] = old_observer) if observer
       value
     end
