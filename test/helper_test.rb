@@ -126,7 +126,7 @@ class HelperTest < Minitest::Test
         assert obj.class.instance_variable_get(:@state_inspector)
         assert_empty obj.class.instance_variable_get(:@state_inspector).keys 
 
-        # there should be nore informing on this method call
+        # there should be no more informing on this method call
         obj.example = 4
         # previous values
         assert_equal [
