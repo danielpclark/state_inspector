@@ -12,7 +12,7 @@ module StateInspector
         Reporter[obj] = observer
       end
       obj.toggle_informant
-      value = yield Reporter[obj]
+      value = yield Reporter.get(obj)
     ensure
       obj.toggle_informant
       (old_observer.nil? ? Reporter.drop(obj) : Reporter[obj] = old_observer) if observer
@@ -26,7 +26,7 @@ module StateInspector
         Reporter[obj] = observer
       end
       obj.toggle_informant
-      value = yield Reporter[obj]
+      value = yield Reporter.get(obj)
     ensure
       obj.toggle_informant
       si = obj.respond_to?(:class_exec) ? obj : obj.class

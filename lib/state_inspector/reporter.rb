@@ -18,8 +18,16 @@ module StateInspector
       end
 
       def has_observer? key
-        class_key = key.respond_to?(:class_exec) ? key : key.class
-        reporters.has_key?(key) || reporters.has_key?(class_key)
+        reporters.has_key?(key) || (reporters.has_key?(key.class) if key.respond_to?(:class_exec))
+      end
+
+      def get key
+        unless key.respond_to?(:class_exec)
+          unless reporters.has_key?(key)
+            return self[key.class] 
+          end
+        end
+        self[key] 
       end
 
       def drop key

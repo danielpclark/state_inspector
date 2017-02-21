@@ -6,10 +6,12 @@ class C; attr_accessor :thing end
 class D; attr_accessor :thing end
 class F; attr_accessor :thing end
 class G; def thing(one:); yield end end
+class H; end
 StateInspector::Reporter[A] = InternalObserver
 StateInspector::Reporter[D] = InternalObserver.new
 StateInspector::Reporter[F] = InternalObserver.new
 StateInspector::Reporter[G] = InternalObserver.new
+StateInspector::Reporter[H] = InternalObserver.new
 
 D.toggle_informant
 F.toggle_informant
@@ -89,6 +91,16 @@ class ReporterTest < Minitest::Test
       g.thing(one: 4) { nil }
       assert_equal [[g, :thing, {:one => 4}]], 
         StateInspector::Reporter[G].values
+    end
+  end
+
+  def test_reporter_lookup_works_on_helper
+    h = H.new
+    toggle_snoop(H) do |observer|
+      assert_kind_of InternalObserver::InternalObserverInstance, observer
+    end
+    toggle_snoop(h) do |observer|
+      assert_kind_of InternalObserver::InternalObserverInstance, observer
     end
   end
 end

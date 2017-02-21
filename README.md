@@ -119,6 +119,15 @@ use `state_inspector.skip_setter_snoops` (before any toggling) or the helper `to
 will cleanly remove its anti-setter hook once done (meaning the next `toggle_informant` will inject the
 informant code into all setters).
 
+The helper block also pipes in the current observer for the object you're toggling. So you may access
+it within the block by pipe assigning it to a variable.
+
+```ruby
+toggle_snoop(m) do |observer|
+  observer # Whatever observer happens to be assigned to this object or its class
+end
+
+```
 
 ## Observers
 
