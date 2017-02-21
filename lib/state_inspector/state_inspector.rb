@@ -48,7 +48,7 @@ module StateInspector
     end
 
     def restore_methods *meth0ds
-      base.class_eval do
+      base.class_exec do
         meth0ds.
           select {|m| (@state_inspector || {}).has_key? m }.
           select {|m| self == @state_inspector[m][:class] }.
@@ -68,7 +68,7 @@ module StateInspector
 
     private
     def base
-      if @base.respond_to? :class_eval
+      if @base.respond_to? :class_exec
         @base
       else
         @base.class

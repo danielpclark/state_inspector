@@ -14,7 +14,7 @@ module StateInspector
 
       def tell_si *args, &block
         if informant?
-          key = self.respond_to?(:class_eval) ? self : self.class
+          key = self.respond_to?(:class_exec) ? self : self.class
           key = Reporter.has_key?(key) ? key : self
           Reporter[key].update(self, *args, &block)
         end
@@ -22,7 +22,7 @@ module StateInspector
 
       def toggle_informant
         state_inspector.snoop_setters(
-          *(self.respond_to?(:class_eval) ? self : self.class).
+          *(self.respond_to?(:class_exec) ? self : self.class).
           instance_methods.grep(/=\z/) - Object.methods
         ) unless @state_inspector || self.class.instance_variable_get(:@state_inspector)
 

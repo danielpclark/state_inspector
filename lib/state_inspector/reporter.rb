@@ -18,7 +18,7 @@ module StateInspector
       end
 
       def has_observer? key
-        class_key = key.respond_to?(:class_eval) ? key : key.class
+        class_key = key.respond_to?(:class_exec) ? key : key.class
         reporters.has_key?(key) || reporters.has_key?(class_key)
       end
 
