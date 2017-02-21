@@ -80,16 +80,21 @@ include StateInspector::Helper
 
 # instead of doing MyClass.toggle_informant as above, do this.
 
+class MyClass
+  attr_writer :thing
+end
+
 m = MyClass.new
 observer = InternalObserver.new
 
 # observer parameter optional.  Assign beforehand if not provided here.
 toggle_snoop(m, observer) do
-  # put your own code here
+  m.thing = 4
 end
 
 # look at the results
 observer.values
+# => [[#<MyClass:0x00562f969dee48 @informant=false, @thing=4>, "@thing", nil, 4]]
 ```
 
 When writing tests for code and using StateInspector it's very important to ensure the informant is
