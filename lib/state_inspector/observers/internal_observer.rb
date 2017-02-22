@@ -6,7 +6,7 @@ module StateInspector
       class << self
         include Observer
 
-        def new 
+        def new
           InternalObserverInstance.new
         end
       end

@@ -7,9 +7,9 @@ module ModInstLevTest
   def thing= val
     @thing = val
     @side_effect = val.to_s + " asdf"
-  end 
+  end
 
-  def carp *args
+  def carp *_
     nil
   end
 
@@ -73,7 +73,6 @@ class ModuleInstanceLevelTest < Minitest::Test
     end
   end
 
-
   def test_adds_hook_to_setter_defined_manually_with_extend_and_include
     m = ExtIncl.new
     observer = StateInspector::Reporter[ExtIncl]
@@ -122,5 +121,4 @@ class ModuleInstanceLevelTest < Minitest::Test
   ensure
     observer.purge
   end
-
 end

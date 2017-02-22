@@ -5,7 +5,7 @@ class B; attr_accessor :thing end
 class C; attr_accessor :thing end
 class D; attr_accessor :thing end
 class F; attr_accessor :thing end
-class G; def thing(one:); yield end end
+class G; def thing(*); yield end end
 class H; end
 StateInspector::Reporter[A] = InternalObserver
 StateInspector::Reporter[D] = InternalObserver.new
@@ -45,12 +45,12 @@ class ReporterTest < Minitest::Test
   def test_internal_observer_can_have_separate_observers
     d = D.new
     d.thing = 4
-    assert_equal [[d, "@thing", nil, 4]], 
+    assert_equal [[d, "@thing", nil, 4]],
       StateInspector::Reporter[D].values
 
     f = F.new
     f.thing = 4
-    assert_equal [[f, "@thing", nil, 4]], 
+    assert_equal [[f, "@thing", nil, 4]],
       StateInspector::Reporter[F].values
 
     assert_empty observer.values
@@ -89,7 +89,7 @@ class ReporterTest < Minitest::Test
     toggle_snoop_clean(g) do
       g.state_inspector.snoop_methods :thing
       g.thing(one: 4) { nil }
-      assert_equal [[g, :thing, {:one => 4}]], 
+      assert_equal [[g, :thing, {one: 4}]],
         StateInspector::Reporter[G].values
     end
   end

@@ -8,9 +8,9 @@ class Clt
     def thing= val
       @thing = val
       @side_effect = val.to_s + " asdf"
-    end 
+    end
 
-    def carp *args
+    def carp *_
       nil
     end
   end

@@ -13,21 +13,21 @@ module StateInspector
         reporters[key] = value
       end
 
-      def has_key? key
-        reporters.has_key?(key)
+      def key? key
+        reporters.key?(key)
       end
 
       def has_observer? key
-        reporters.has_key?(key) || (reporters.has_key?(key.class) if key.respond_to?(:class_exec))
+        reporters.key?(key) || (reporters.key?(key.class) if key.respond_to?(:class_exec))
       end
 
       def get key
         unless key.respond_to?(:class_exec)
-          unless reporters.has_key?(key)
-            return self[key.class] 
+          unless reporters.key?(key)
+            return self[key.class]
           end
         end
-        self[key] 
+        self[key]
       end
 
       def drop key
@@ -36,15 +36,15 @@ module StateInspector
 
       def default observer=nil
         @default = observer if observer
-        reporters.default = @default 
+        reporters.default = @default
         @default
       end
 
       private
       def reporters
-        @reporters ||= Hash.new.tap {|h|
+        @reporters ||= Hash.new.tap do |h|
           h.default = @default || Observers::NullObserver
-        }
+        end
       end
     end
   end

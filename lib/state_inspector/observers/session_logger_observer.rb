@@ -17,7 +17,7 @@ module StateInspector
             logger = Logger.new(file)
             logger << values.
               map(&value_mapper).
-              join(splitter) 
+              join(splitter)
             logger << "\n"
           end
         end
@@ -60,7 +60,7 @@ module StateInspector
         end
 
         def value_mapper
-          ->v{
+          lambda do |v|
             case v
             when nil
               "nil"
@@ -73,7 +73,7 @@ module StateInspector
             else
               v
             end
-          }
+          end
         end
       end
     end

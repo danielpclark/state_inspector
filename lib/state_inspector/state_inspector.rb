@@ -1,6 +1,6 @@
 module StateInspector
   class StateInspector
-    def initialize base, **opts
+    def initialize base
       @base = base # pass in self
     end
 
@@ -9,7 +9,7 @@ module StateInspector
         setters.
           delete_if {|m| (@state_inspector || {}).fetch(m){ nil } }.
           each do |m|
-            single = singleton_methods.include?(m) && method(m).owner == self.singleton_class
+            single = singleton_methods.include?(m) && method(m).owner == singleton_class
             original_method = (single ? singleton_method(m).unbind : instance_method(m))
             (@state_inspector ||= {})[m] = {
               contructor: __method__,
@@ -31,7 +31,7 @@ module StateInspector
         meth0ds.
           delete_if {|m| (@state_inspector || {}).fetch(m){ nil } }.
           each do |m|
-            single = singleton_methods.include?(m) && method(m).owner == self.singleton_class 
+            single = singleton_methods.include?(m) && method(m).owner == singleton_class
             original_method = (single ? singleton_method(m).unbind : instance_method(m))
             (@state_inspector ||= {})[m] = {
               contructor: __method__,
@@ -50,7 +50,7 @@ module StateInspector
     def restore_methods *meth0ds
       base.class_exec do
         meth0ds.
-          select {|m| (@state_inspector || {}).has_key? m }.
+          select {|m| (@state_inspector || {}).key? m }.
           select {|m| self == @state_inspector[m][:class] }.
           each do |m|
             definer = @state_inspector[m][:singleton_method] ? :define_singleton_method : :define_method

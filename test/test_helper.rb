@@ -9,7 +9,6 @@ Minitest.backtrace_filter = Minitest::BacktraceFilter.new
 
 Minitest::Reporters.use! [ColorPoundSpecReporter.new]
 
-
 require 'state_inspector/helper'
 
 class Minitest::Test
