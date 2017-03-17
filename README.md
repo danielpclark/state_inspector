@@ -1,5 +1,7 @@
 <img src="https://s23.postimg.org/4iiqow7xn/observer_hooks3.png" alt="Observer Hooks" align="right" width="50" height="44" />
+
 # StateInspector
+
 [![Gem Version](https://badge.fury.io/rb/state_inspector.svg)](http://badge.fury.io/rb/state_inspector)
 [![Build Status](https://travis-ci.org/danielpclark/state_inspector.svg?branch=master)](https://travis-ci.org/danielpclark/state_inspector)
 [![SayThanks.io](https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg)](https://saythanks.io/to/danielpclark)
