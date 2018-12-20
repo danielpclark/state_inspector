@@ -1,5 +1,3 @@
-<img src="https://s23.postimg.org/4iiqow7xn/observer_hooks3.png" alt="Observer Hooks" align="right" width="50" height="44" />
-
 # StateInspector
 
 [![Gem Version](https://badge.fury.io/rb/state_inspector.svg)](http://badge.fury.io/rb/state_inspector)
